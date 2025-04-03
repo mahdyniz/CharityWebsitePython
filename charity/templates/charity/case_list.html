@@ -1,60 +1,107 @@
 {% extends 'charity/base.html' %}
 
-{% block title %}Charity Cases - Charity Website{% endblock %}
+{% block title %}Charity Cases{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h1 class="mb-4">Charity Cases</h1>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Filter by Category</h5>
-                <div class="list-group">
-                    <a href="{% url 'charity:case_list' %}" class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}">
-                        All Cases
-                    </a>
-                    {% for category in categories %}
-                    <a href="{% url 'charity:case_list' %}?category={{ category.id }}" 
-                       class="list-group-item list-group-item-action {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
-                        {{ category.name }}
-                    </a>
-                    {% endfor %}
+<!-- Header Section -->
+<section class="bg-light py-4 mb-5">
+    <div class="container">
+        <h1 class="section-title mb-0">Charity Cases</h1>
+        <p class="lead text-muted">Browse through our active charity cases and make a difference.</p>
+    </div>
+</section>
+
+<!-- Filters Section -->
+<section class="container mb-5">
+    <div class="card">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </div>
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search cases..." value="{{ search_query }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
+</section>
 
-<div class="row">
-    {% for case in cases %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            {% if case.image %}
-            <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}">
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{ case.title }}</h5>
-                <p class="card-text">{{ case.description|truncatewords:30 }}</p>
-                <div class="progress mb-3">
-                    <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
-                        {{ case.progress_percentage|floatformat:1 }}%
+<!-- Cases Grid -->
+<section class="container mb-5">
+    <div class="row g-4">
+        {% for case in cases %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if case.image %}
+                <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title mb-0">{{ case.title }}</h5>
+                        <span class="badge bg-primary">{{ case.category.name }}</span>
+                    </div>
+                    <p class="card-text">{{ case.description|truncatewords:30 }}</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
+                            {{ case.progress_percentage|floatformat:1 }}%
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            ${{ case.current_amount }} raised of ${{ case.target_amount }}
+                        </small>
+                        <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary">Learn More</a>
                     </div>
                 </div>
-                <p class="card-text">
-                    <small class="text-muted">
-                        ${{ case.current_amount }} raised of ${{ case.target_amount }}
-                    </small>
-                </p>
-                <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary">Learn More</a>
             </div>
         </div>
-    </div>
-    {% empty %}
-    <div class="col-md-12">
-        <div class="alert alert-info">
-            No cases found in this category.
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No cases found matching your criteria.
+            </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-{% endblock %} 
+</section>
+
+<!-- Pagination -->
+{% if cases.has_other_pages %}
+<section class="container mb-5">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if cases.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ cases.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+            </li>
+            {% endif %}
+            
+            {% for num in cases.paginator.page_range %}
+            <li class="page-item {% if cases.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if cases.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ cases.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</section>
+{% endif %}
+{% endblock %}

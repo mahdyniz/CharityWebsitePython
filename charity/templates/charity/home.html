@@ -3,61 +3,77 @@
 {% block title %}Home - Charity Website{% endblock %}
 
 {% block content %}
-<div class="row mb-5">
-    <div class="col-md-12 text-center">
-        <h1 class="display-4">Welcome to Charity Website</h1>
-        <p class="lead">Make a difference in someone's life today</p>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">Make a Difference Today</h1>
+        <p class="lead mb-4">Join us in helping those in need through charitable donations and support.</p>
+        <a href="{% url 'charity:case_list' %}" class="btn btn-primary btn-lg">View All Cases</a>
     </div>
-</div>
+</section>
 
-<div class="row mb-5">
-    <div class="col-md-12">
-        <h2 class="mb-4">Categories</h2>
-        <div class="row">
-            {% for category in categories %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ category.name }}</h5>
-                        <p class="card-text">{{ category.description|truncatewords:20 }}</p>
-                        <a href="{% url 'charity:case_list' %}?category={{ category.id }}" class="btn btn-primary">View Cases</a>
-                    </div>
+<!-- Categories Section -->
+<section class="container mb-5">
+    <h2 class="section-title">Browse by Category</h2>
+    <div class="row g-4">
+        {% for category in categories %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-folder2-open display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">{{ category.name }}</h5>
+                    <p class="card-text text-muted">{{ category.description|truncatewords:20 }}</p>
+                    <a href="{% url 'charity:case_list' %}?category={{ category.id }}" class="btn btn-outline-primary">View Cases</a>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
-</div>
+</section>
 
-<div class="row">
-    <div class="col-md-12">
-        <h2 class="mb-4">Featured Cases</h2>
-        <div class="row">
-            {% for case in active_cases %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    {% if case.image %}
-                    <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ case.title }}</h5>
-                        <p class="card-text">{{ case.description|truncatewords:30 }}</p>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
-                                {{ case.progress_percentage|floatformat:1 }}%
-                            </div>
+<!-- Featured Cases Section -->
+<section class="container mb-5">
+    <h2 class="section-title">Featured Cases</h2>
+    <div class="row g-4">
+        {% for case in active_cases %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if case.image %}
+                <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ case.title }}</h5>
+                    <p class="card-text">{{ case.description|truncatewords:30 }}</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
+                            {{ case.progress_percentage|floatformat:1 }}%
                         </div>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                ${{ case.current_amount }} raised of ${{ case.target_amount }}
-                            </small>
-                        </p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            ${{ case.current_amount }} raised of ${{ case.target_amount }}
+                        </small>
                         <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary">Learn More</a>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No active cases at the moment.
+            </div>
+        </div>
+        {% endfor %}
     </div>
-</div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <h2 class="section-title">Ready to Make a Difference?</h2>
+        <p class="lead mb-4">Your contribution can help change lives. Browse our cases and make a donation today.</p>
+        <a href="{% url 'charity:case_list' %}" class="btn btn-primary btn-lg">View All Cases</a>
+    </div>
+</section>
 {% endblock %} 
