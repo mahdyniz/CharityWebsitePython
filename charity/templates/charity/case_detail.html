@@ -1,0 +1,67 @@
+{% extends 'charity/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ case.title }} - Charity Website{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        {% if case.image %}
+        <img src="{{ case.image.url }}" class="img-fluid rounded mb-4" alt="{{ case.title }}">
+        {% endif %}
+        
+        <h1 class="mb-4">{{ case.title }}</h1>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
+                        {{ case.progress_percentage|floatformat:1 }}%
+                    </div>
+                </div>
+                <p class="card-text">
+                    <strong>${{ case.current_amount }}</strong> raised of <strong>${{ case.target_amount }}</strong>
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Category: {{ case.category.name }} | Deadline: {{ case.deadline|date:"F j, Y" }}
+                    </small>
+                </p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">About this case</h5>
+                <p class="card-text">{{ case.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Make a Donation</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Donate Now</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Recent Donations</h5>
+                {% for donation in recent_donations %}
+                <div class="mb-3">
+                    <p class="mb-1"><strong>${{ donation.amount }}</strong> by {{ donation.donor_name }}</p>
+                    <small class="text-muted">{{ donation.created_at|date:"F j, Y" }}</small>
+                </div>
+                {% empty %}
+                <p class="text-muted">No donations yet. Be the first to donate!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,63 @@
+{% extends 'charity/base.html' %}
+
+{% block title %}Home - Charity Website{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-12 text-center">
+        <h1 class="display-4">Welcome to Charity Website</h1>
+        <p class="lead">Make a difference in someone's life today</p>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 class="mb-4">Categories</h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text">{{ category.description|truncatewords:20 }}</p>
+                        <a href="{% url 'charity:case_list' %}?category={{ category.id }}" class="btn btn-primary">View Cases</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">Featured Cases</h2>
+        <div class="row">
+            {% for case in active_cases %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if case.image %}
+                    <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ case.title }}</h5>
+                        <p class="card-text">{{ case.description|truncatewords:30 }}</p>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
+                                {{ case.progress_percentage|floatformat:1 }}%
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                ${{ case.current_amount }} raised of ${{ case.target_amount }}
+                            </small>
+                        </p>
+                        <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

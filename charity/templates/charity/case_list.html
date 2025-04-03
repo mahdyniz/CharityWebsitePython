@@ -1,0 +1,60 @@
+{% extends 'charity/base.html' %}
+
+{% block title %}Charity Cases - Charity Website{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-4">Charity Cases</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filter by Category</h5>
+                <div class="list-group">
+                    <a href="{% url 'charity:case_list' %}" class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}">
+                        All Cases
+                    </a>
+                    {% for category in categories %}
+                    <a href="{% url 'charity:case_list' %}?category={{ category.id }}" 
+                       class="list-group-item list-group-item-action {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for case in cases %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if case.image %}
+            <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ case.title }}</h5>
+                <p class="card-text">{{ case.description|truncatewords:30 }}</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
+                        {{ case.progress_percentage|floatformat:1 }}%
+                    </div>
+                </div>
+                <p class="card-text">
+                    <small class="text-muted">
+                        ${{ case.current_amount }} raised of ${{ case.target_amount }}
+                    </small>
+                </p>
+                <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary">Learn More</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            No cases found in this category.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 
