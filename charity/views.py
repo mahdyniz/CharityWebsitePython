@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from decimal import Decimal
 from .models import Category, CharityCase, Donation
 from .forms import DonationForm
+from django.db.models import Q
 
 def home(request):
     categories = Category.objects.all()
@@ -14,28 +15,45 @@ def home(request):
     })
 
 def case_list(request):
-    category_id = request.GET.get('category')
-    search_query = request.GET.get('search')
+    search_query = request.GET.get('search', '')
+    page = request.GET.get('page', 1)
+    completed_page = request.GET.get('completed_page', 1)
     
-    cases = CharityCase.objects.filter(is_active=True)
+    # Base queryset for active cases
+    active_cases = CharityCase.objects.filter(is_active=True).order_by('-created_at')
     
-    if category_id:
-        cases = cases.filter(category_id=category_id)
+    # Base queryset for completed cases
+    completed_cases = CharityCase.objects.filter(is_active=False).order_by('-created_at')
     
+    # Apply search if provided
     if search_query:
-        cases = cases.filter(title__icontains=search_query) | cases.filter(description__icontains=search_query)
+        active_cases = active_cases.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+        completed_cases = completed_cases.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
     
-    paginator = Paginator(cases, 9)  # Show 9 cases per page
-    page_number = request.GET.get('page')
-    cases = paginator.get_page(page_number)
+    # Paginate active cases
+    active_paginator = Paginator(active_cases, 6)
+    try:
+        active_cases = active_paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+        active_cases = active_paginator.page(1)
     
-    categories = Category.objects.all()
+    # Paginate completed cases
+    completed_paginator = Paginator(completed_cases, 6)
+    try:
+        completed_cases = completed_paginator.page(completed_page)
+    except (PageNotAnInteger, EmptyPage):
+        completed_cases = completed_paginator.page(1)
     
     return render(request, 'charity/case_list.html', {
-        'cases': cases,
-        'categories': categories,
-        'selected_category': category_id,
-        'search_query': search_query,
+        'active_cases': active_cases,
+        'completed_cases': completed_cases,
+        'search_query': search_query
     })
 
 def case_detail(request, pk):

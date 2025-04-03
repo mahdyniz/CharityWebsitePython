@@ -1,107 +1,188 @@
 {% extends 'charity/base.html' %}
+{% load static %}
 
 {% block title %}Charity Cases{% endblock %}
 
 {% block content %}
-<!-- Header Section -->
-<section class="bg-light py-4 mb-5">
-    <div class="container">
-        <h1 class="section-title mb-0">Charity Cases</h1>
-        <p class="lead text-muted">Browse through our active charity cases and make a difference.</p>
-    </div>
-</section>
-
-<!-- Filters Section -->
-<section class="container mb-5">
-    <div class="card">
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-4">
-                    <label for="category" class="form-label">Category</label>
-                    <select name="category" id="category" class="form-select">
-                        <option value="">All Categories</option>
-                        {% for category in categories %}
-                        <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
-                            {{ category.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="search" class="form-label">Search</label>
-                    <input type="text" name="search" id="search" class="form-control" placeholder="Search cases..." value="{{ search_query }}">
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                </div>
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="h2 mb-3">Active Cases</h1>
+            <p class="text-muted">Help us make a difference in these ongoing causes</p>
+        </div>
+        <div class="col-md-6">
+            <form method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search cases..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
     </div>
-</section>
 
-<!-- Cases Grid -->
-<section class="container mb-5">
-    <div class="row g-4">
-        {% for case in cases %}
-        <div class="col-md-4">
-            <div class="card h-100">
+    {% if active_cases %}
+    <div class="row g-4 mb-5">
+        {% for case in active_cases %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
                 {% if case.image %}
-                <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}">
+                {% else %}
+                <img src="{% static 'charity/images/default-case.jpg' %}" class="card-img-top" alt="Default case image">
                 {% endif %}
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h5 class="card-title mb-0">{{ case.title }}</h5>
-                        <span class="badge bg-primary">{{ case.category.name }}</span>
-                    </div>
-                    <p class="card-text">{{ case.description|truncatewords:30 }}</p>
-                    <div class="progress mb-3">
-                        <div class="progress-bar" role="progressbar" style="width: {{ case.progress_percentage }}%">
-                            {{ case.progress_percentage|floatformat:1 }}%
+                    <h5 class="card-title">{{ case.title }}</h5>
+                    <p class="card-text text-muted">{{ case.description|truncatewords:30 }}</p>
+                    
+                    <div class="progress mb-3" style="height: 20px;">
+                        {% widthratio case.current_amount case.target_amount 100 as percentage %}
+                        <div class="progress-bar bg-primary" role="progressbar" 
+                             style="width: {{ percentage|floatformat:1 }}%;" 
+                             aria-valuenow="{{ percentage|floatformat:1 }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ percentage|floatformat:1 }}%
                         </div>
                     </div>
+                    
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            ${{ case.current_amount }} raised of ${{ case.target_amount }}
-                        </small>
-                        <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary">Learn More</a>
+                        <div>
+                            <small class="text-muted">Raised</small>
+                            <div>${{ case.current_amount|floatformat:2 }}</div>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">Goal</small>
+                            <div>${{ case.target_amount|floatformat:2 }}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info">
-                No cases found matching your criteria.
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-primary w-100">Learn More</a>
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
-</section>
 
-<!-- Pagination -->
-{% if cases.has_other_pages %}
-<section class="container mb-5">
-    <nav aria-label="Page navigation">
+    {% if active_cases.has_other_pages %}
+    <nav aria-label="Page navigation" class="mb-5">
         <ul class="pagination justify-content-center">
-            {% if cases.has_previous %}
+            {% if active_cases.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ cases.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+                <a class="page-link" href="?page={{ active_cases.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
             </li>
             {% endif %}
             
-            {% for num in cases.paginator.page_range %}
-            <li class="page-item {% if cases.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
-            </li>
+            {% for num in active_cases.paginator.page_range %}
+                {% if active_cases.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
             {% endfor %}
             
-            {% if cases.has_next %}
+            {% if active_cases.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ cases.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+                <a class="page-link" href="?page={{ active_cases.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
             </li>
             {% endif %}
         </ul>
     </nav>
-</section>
-{% endif %}
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        No active cases found. {% if search_query %}Try a different search term.{% endif %}
+    </div>
+    {% endif %}
+
+    <div class="row mb-4 mt-5">
+        <div class="col-md-6">
+            <h1 class="h2 mb-3">Completed Cases</h1>
+            <p class="text-muted">Successfully funded causes that made a difference</p>
+        </div>
+    </div>
+
+    {% if completed_cases %}
+    <div class="row g-4">
+        {% for case in completed_cases %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                {% if case.image %}
+                <img src="{{ case.image.url }}" class="card-img-top" alt="{{ case.title }}">
+                {% else %}
+                <img src="{% static 'charity/images/default-case.jpg' %}" class="card-img-top" alt="Default case image">
+                {% endif %}
+                <div class="card-body">
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-success">Completed</span>
+                    </div>
+                    <h5 class="card-title">{{ case.title }}</h5>
+                    <p class="card-text text-muted">{{ case.description|truncatewords:30 }}</p>
+                    
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: 100%;" 
+                             aria-valuenow="100" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            100%
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Raised</small>
+                            <div>${{ case.current_amount|floatformat:2 }}</div>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">Goal</small>
+                            <div>${{ case.target_amount|floatformat:2 }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'charity:case_detail' case.pk %}" class="btn btn-outline-primary w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if completed_cases.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if completed_cases.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?completed_page={{ completed_cases.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+            </li>
+            {% endif %}
+            
+            {% for num in completed_cases.paginator.page_range %}
+                {% if completed_cases.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?completed_page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if completed_cases.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?completed_page={{ completed_cases.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">
+        No completed cases found. {% if search_query %}Try a different search term.{% endif %}
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
