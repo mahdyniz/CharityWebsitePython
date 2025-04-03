@@ -39,33 +39,34 @@ def case_list(request):
     })
 
 def case_detail(request, pk):
-    case = get_object_or_404(CharityCase, pk=pk, is_active=True)
-    if request.method == 'POST':
-        form = DonationForm(request.POST)
-        if form.is_valid():
-            donation = form.save(commit=False)
-            donation.case = case
-            donation.save()
-            
-            # Update case amount
-            case.current_amount += donation.amount
-            case.save()
-            
-            messages.success(request, 'Thank you for your donation! Your contribution will help make a difference.')
-            return redirect('charity:case_detail', pk=pk)
-    else:
-        form = DonationForm()
+    case = get_object_or_404(CharityCase, pk=pk)
+    recent_donations = Donation.objects.filter(case=case).order_by('-created_at')[:5]
     
-    recent_donations = case.donations.order_by('-created_at')[:5]
+    # Calculate percentage
+    if case.target_amount > 0:
+        percentage = (case.current_amount / case.target_amount) * 100
+    else:
+        percentage = 0
+    
+    # Calculate remaining amount needed
+    remaining_amount = case.target_amount - case.current_amount
+    
     return render(request, 'charity/case_detail.html', {
         'case': case,
-        'form': form,
-        'recent_donations': recent_donations
+        'recent_donations': recent_donations,
+        'percentage': percentage,
+        'remaining_amount': remaining_amount
     })
 
 def make_donation(request, pk):
     if request.method == 'POST':
         case = get_object_or_404(CharityCase, pk=pk)
+        
+        # Check if case is still active
+        if not case.is_active:
+            messages.error(request, "This case is no longer accepting donations.")
+            return redirect('charity:case_detail', pk=pk)
+        
         donor_name = request.POST.get('donor_name')
         amount = request.POST.get('amount')
         message = request.POST.get('message')
@@ -74,6 +75,15 @@ def make_donation(request, pk):
             amount = Decimal(amount)
             if amount <= 0:
                 raise ValueError("Amount must be greater than 0")
+            
+            # Calculate remaining amount needed
+            remaining_amount = case.target_amount - case.current_amount
+            
+            # Check if donation amount exceeds remaining amount needed
+            if amount > remaining_amount:
+                messages.error(request, f"Please donate ${remaining_amount:.2f} or less to complete this case.")
+                return redirect('charity:case_detail', pk=pk)
+                
         except (ValueError, TypeError):
             messages.error(request, "Please enter a valid amount.")
             return redirect('charity:case_detail', pk=pk)
@@ -86,9 +96,15 @@ def make_donation(request, pk):
         )
         
         case.current_amount += amount
-        case.save()
         
-        messages.success(request, f"Thank you for your donation of ${amount:.2f}!")
+        # Check if case is now complete
+        if case.current_amount >= case.target_amount:
+            case.is_active = False
+            messages.success(request, f"Thank you for your donation! This case has been fully funded!")
+        else:
+            messages.success(request, f"Thank you for your donation of ${amount:.2f}!")
+        
+        case.save()
         return redirect('charity:case_detail', pk=pk)
     
     return redirect('charity:case_detail', pk=pk)
