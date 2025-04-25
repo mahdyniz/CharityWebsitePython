@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-11 18:53+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Charity Website"
+msgstr "وب‌سایت خیریه"
+
+msgid "Home"
+msgstr "خانه"
+
+msgid "Cases"
+msgstr "موارد"
+
+msgid "About"
+msgstr "درباره ما"
+
+msgid "Contact"
+msgstr "تماس با ما"
+
+msgid "Language"
+msgstr "زبان"
+
+msgid "English"
+msgstr "انگلیسی"
+
+msgid "Persian"
+msgstr "فارسی"
+
+msgid "Search"
+msgstr "جستجو"
+
+msgid "Active Cases"
+msgstr "موارد فعال"
+
+msgid "Completed Cases"
+msgstr "موارد تکمیل شده"
+
+msgid "Make a Donation"
+msgstr "کمک مالی"
+
+msgid "Your Name"
+msgstr "نام شما"
+
+msgid "Amount"
+msgstr "مبلغ"
+
+msgid "Message (Optional)"
+msgstr "پیام (اختیاری)"
+
+msgid "Donate Now"
+msgstr "پرداخت"
+
+msgid "Recent Donations"
+msgstr "کمک‌های اخیر"
+
+msgid "No donations yet. Be the first to help!"
+msgstr "هنوز کمکی دریافت نشده است. اولین نفری باشید که کمک می‌کند!"
+
+msgid "This case has been fully funded! Thank you to all donors."
+msgstr "این مورد به طور کامل تامین مالی شده است! از همه کمک کنندگان متشکریم."
+
+msgid "Maximum amount"
+msgstr "حداکثر مبلغ"
+
+msgid "Description"
+msgstr "توضیحات"
+
+msgid "Category"
+msgstr "دسته‌بندی"
+
+msgid "Raised"
+msgstr "جمع‌آوری شده"
+
+msgid "Goal"
+msgstr "هدف"
+
+msgid "Make a Difference Today"
+msgstr "امروز تغییر ایجاد کنید"
+
+msgid "Join us in helping those in need through charitable donations and support."
+msgstr "به ما بپیوندید تا با کمک‌های مالی و حمایت، به نیازمندان یاری رسانیم."
+
+msgid "View All Cases"
+msgstr "مشاهده همه موارد"
+
+msgid "Browse by Category"
+msgstr "مرور بر اساس دسته‌بندی"
+
+msgid "View Cases"
+msgstr "مشاهده موارد"
+
+msgid "Featured Cases"
+msgstr "موارد برجسته"
+
+msgid "Learn More"
+msgstr "اطلاعات بیشتر"
+
+msgid "Ready to Make a Difference?"
+msgstr "آماده ایجاد تغییر هستید؟"
+
+msgid "Your contribution can help change lives. Browse our cases and make a donation today."
+msgstr "کمک شما می‌تواند زندگی‌ها را تغییر دهد. موارد ما را مرور کنید و امروز کمک کنید."
+
+msgid "Help us make a difference in these ongoing causes"
+msgstr "به ما کمک کنید تا در این موارد جاری تغییر ایجاد کنیم"
+
+msgid "Successfully funded causes that made a difference"
+msgstr "مواردی که با موفقیت تامین مالی شدند و تغییر ایجاد کردند"
+
+msgid "Completed"
+msgstr "تکمیل شده"
+
+msgid "View Details"
+msgstr "مشاهده جزئیات"
+
+msgid "About Us"
+msgstr "درباره ما"
+
+msgid "We are dedicated to making a positive impact in the world by connecting generous donors with meaningful causes."
+msgstr "ما متعهد به ایجاد تاثیر مثبت در جهان هستیم و با اتصال کمک‌کنندگان سخاوتمند به موارد معنادار، این هدف را دنبال می‌کنیم."
+
+msgid "Quick Links"
+msgstr "لینک‌های سریع"
+
+msgid "Contact Us"
+msgstr "تماس با ما"
+
+msgid "123 Charity Street, City, Country"
+msgstr "خیابان خیریه ۱۲۳، شهر، کشور"
+
+msgid "info@charity.com"
+msgstr "info@charity.com"
+
+msgid "+1 (234) 567-890"
+msgstr "+۱ (۲۳۴) ۵۶۷-۸۹۰"

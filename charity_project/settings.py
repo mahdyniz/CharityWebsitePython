@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from django.core.management.commands.compilemessages import Command as CompileMessagesCommand
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -65,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
             ],
         },
     },
@@ -106,13 +110,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('fa', 'فارسی'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -134,3 +149,35 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+class CustomCompileMessagesCommand(CompileMessagesCommand):
+    def find_locales(self):
+        """Return a list of all locale paths."""
+        basedirs = [os.path.join('locale')]
+        if os.path.isdir(basedirs[0]):
+            dirs = os.listdir(basedirs[0])
+            return [os.path.join(basedirs[0], dir) for dir in dirs
+                    if os.path.isdir(os.path.join(basedirs[0], dir))]
+        return []
+
+    def handle(self, *args, **options):
+        # Override the compile_messages method to use Python's built-in gettext
+        from gettext import GNUTranslations
+        import polib
+        
+        for locale in self.find_locales():
+            po_file = os.path.join(locale, 'LC_MESSAGES', 'django.po')
+            if os.path.exists(po_file):
+                mo_file = os.path.join(locale, 'LC_MESSAGES', 'django.mo')
+                po = polib.pofile(po_file)
+                po.save_as_mofile(mo_file)
+                self.stdout.write(f'compiled {po_file} to {mo_file}')
+
+# Add the custom command to Django's management commands
+from django.core.management.commands import compilemessages
+compilemessages.Command = CustomCompileMessagesCommand
+
+# Authentication settings
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'

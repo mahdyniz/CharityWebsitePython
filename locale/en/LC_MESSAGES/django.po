@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-11 18:53+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Charity Website"
+msgstr "Charity Website"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Cases"
+msgstr "Cases"
+
+msgid "About"
+msgstr "About"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "English"
+msgstr "English"
+
+msgid "Persian"
+msgstr "Persian"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Active Cases"
+msgstr "Active Cases"
+
+msgid "Completed Cases"
+msgstr "Completed Cases"
+
+msgid "Make a Donation"
+msgstr "Make a Donation"
+
+msgid "Your Name"
+msgstr "Your Name"
+
+msgid "Amount"
+msgstr "Amount"
+
+msgid "Message (Optional)"
+msgstr "Message (Optional)"
+
+msgid "Donate Now"
+msgstr "Donate Now"
+
+msgid "Recent Donations"
+msgstr "Recent Donations"
+
+msgid "No donations yet. Be the first to help!"
+msgstr "No donations yet. Be the first to help!"
+
+msgid "This case has been fully funded! Thank you to all donors."
+msgstr "This case has been fully funded! Thank you to all donors."
+
+msgid "Maximum amount"
+msgstr "Maximum amount"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Category"
+msgstr "Category"
+
+msgid "Raised"
+msgstr "Raised"
+
+msgid "Goal"
+msgstr "Goal"
